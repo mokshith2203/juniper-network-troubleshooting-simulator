@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juniper Network Troubleshooting Simulator</title>
+<style>
+:root{--green:#087b45;--dark:#102b45;--teal:#20a5b1;--gold:#e7a52e;--bg:#f3f7fa;--ink:#1c2c3b;--muted:#647487;--card:#fff;--border:#dce5eb;--red:#c63d4f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(115deg,#102b45,#124b50);color:white;padding:28px max(20px,calc((100% - 1180px)/2));border-bottom:5px solid var(--teal)}
+.brand{font-size:12px;letter-spacing:1.6px;color:#79d5cb;font-weight:800}.hero{display:flex;justify-content:space-between;gap:24px;align-items:center;flex-wrap:wrap}.hero h1{margin:12px 0 8px;font-size:clamp(25px,4vw,38px)}.hero p{margin:0;color:#d5e3ed;max-width:720px;line-height:1.5}.badge{background:#ffffff16;border:1px solid #ffffff40;border-radius:12px;padding:12px 16px;font-size:13px}
+main{max-width:1180px;margin:24px auto;padding:0 18px 40px}.notice{background:#fff7df;border:1px solid #f2d78c;border-radius:10px;padding:12px 15px;font-size:13px;line-height:1.5;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:19px;box-shadow:0 5px 18px #153a5010}.panel h2{font-size:18px;margin:0 0 6px;color:var(--dark)}.sub{color:var(--muted);font-size:13px;margin:0 0 17px;line-height:1.45}
+.topology{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;align-items:center;gap:4px;margin:22px 0 18px}.node{border:1px solid var(--border);border-radius:12px;padding:14px 7px;text-align:center;background:#fbfdff;min-height:104px}.node .icon{font-size:25px;margin-bottom:6px}.node strong{display:block;font-size:13px}.node small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.4}.connector{height:3px;background:#aab8c4;position:relative}.connector:after{content:"›";position:absolute;right:-2px;top:-14px;color:#718596;font-size:26px}.node.active{border:2px solid var(--teal);background:#e9fbfa}.node.problem{border:2px solid var(--red);background:#fff0f1}.node.good{border:2px solid var(--green);background:#effaf3}
+.steps{display:flex;gap:8px;flex-wrap:wrap}.step{font-size:12px;background:#eef4f7;padding:7px 10px;border-radius:8px;color:#45586a}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}select{width:100%;padding:10px 11px;border:1px solid #cbd7e0;border-radius:9px;background:white;color:var(--ink);font:inherit}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:9px;padding:11px 14px;font-weight:750;cursor:pointer;font-size:13px}.primary{background:var(--green);color:white}.secondary{background:#eaf1f5;color:var(--dark)}.btn:hover{filter:brightness(.96)}
+.status{border-radius:10px;padding:13px 14px;margin-top:15px;font-size:13px;line-height:1.5}.status.ok{background:#eaf8ef;border:1px solid #b7e2c5;color:#176c3b}.status.bad{background:#fff0f1;border:1px solid #f1c0c6;color:#9c2535}.status.neutral{background:#edf6fb;border:1px solid #c8e2f0;color:#235a75}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.kpi{background:#f7fafc;border:1px solid var(--border);border-radius:10px;padding:12px}.kpi span{display:block;font-size:11px;color:var(--muted)}.kpi strong{display:block;font-size:17px;margin-top:5px}
+.checklist{display:grid;gap:8px}.check{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 11px;font-size:13px;line-height:1.4}.dot{width:9px;height:9px;border-radius:50%;background:#9aabb8;flex:0 0 9px;margin-top:4px}.check.pass .dot{background:var(--green)}.check.fail .dot{background:var(--red)}.check strong{display:block;margin-bottom:2px}
+.full{margin-top:18px}.log{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;line-height:1.65;background:#0e2438;color:#d6e8f4;border-radius:10px;padding:14px;min-height:104px;white-space:pre-wrap}.log .oktxt{color:#78e2a0}.log .warntxt{color:#ffd479}
+footer{text-align:center;color:#718092;font-size:12px;padding:20px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.topology{grid-template-columns:1fr;gap:7px}.connector{width:3px;height:20px;margin:auto}.connector:after{content:"⌄";right:-8px;top:0}.node{min-height:0}.controls{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="hero"><div><div class="brand">MOHAN BABU UNIVERSITY · SCHOOL OF COMPUTING</div><h1>Juniper Network Troubleshooting Simulator</h1><p>An interactive learning application based on Networking Cloud internship topics: Junos OS, interfaces, VLANs, routing, OSPF, firewall filters, and operational checks.</p></div><div class="badge">Internship Project · Demo Mode</div></div></header>
+<main>
+<div class="notice"><strong>Project note:</strong> This is a browser-based educational simulator. It demonstrates troubleshooting logic with sample scenarios; it does not connect to or configure a physical Juniper device.</div>
+<div class="grid">
+<section class="panel">
+<h2>1. Conceptual Network Topology</h2><p class="sub">Select a fault scenario on the right, then run the diagnostic to see how the issue affects traffic flow.</p>
+<div class="topology" id="topology">
+<div class="node" id="n-client"><div class="icon">💻</div><strong>Client Devices</strong><small>VLAN 10 / VLAN 20<br>IP addressing</small></div><div class="connector"></div>
+<div class="node" id="n-switch"><div class="icon">🔀</div><strong>Juniper Switch</strong><small>MAC table<br>Access / trunk ports</small></div><div class="connector"></div>
+<div class="node" id="n-router"><div class="icon">🌐</div><strong>Junos Routing</strong><small>Routing table<br>Static / OSPF</small></div>
+</div>
+<div class="topology" style="grid-template-columns:1fr 42px 1fr 42px 1fr;margin-top:0">
+<div class="node" id="n-source"><div class="icon">📨</div><strong>Incoming Traffic</strong><small>Packet enters network</small></div><div class="connector"></div>
+<div class="node" id="n-filter"><div class="icon">🛡️</div><strong>Firewall Filter</strong><small>Match conditions<br>Policy action</small></div><div class="connector"></div>
+<div class="node" id="n-dest"><div class="icon">☁️</div><strong>Remote Network</strong><small>Destination reachable?</small></div>
+</div>
+<div class="steps"><span class="step">1 · Interface</span><span class="step">2 · VLAN / MAC</span><span class="step">3 · Route / OSPF</span><span class="step">4 · Filter / logs</span></div>
+<div id="result" class="status neutral">Ready. Choose a scenario and click <b>Run Troubleshooting</b>.</div>
+<div class="kpis"><div class="kpi"><span>Diagnostic status</span><strong id="k-status">Ready</strong></div><div class="kpi"><span>Checks passed</span><strong id="k-passed">—</strong></div><div class="kpi"><span>Traffic outcome</span><strong id="k-traffic">Not tested</strong></div></div>
+</section>
+<section class="panel">
+<h2>2. Choose a Scenario</h2><p class="sub">Each scenario represents a common configuration or reachability problem related to the internship syllabus.</p>
+<label for="scenario">Simulated network issue</label>
+<select id="scenario">
+<option value="healthy">Healthy network — no fault</option>
+<option value="interface">Interface is down</option>
+<option value="vlan">Incorrect VLAN assignment</option>
+<option value="route">Missing route to destination</option>
+<option value="ospf">OSPF neighbor / route issue</option>
+<option value="firewall">Firewall filter blocks traffic</option>
+<option value="address">Incorrect IP addressing</option>
+</select>
+<div class="controls" style="margin-top:15px"><button class="btn primary" id="run">▶ Run Troubleshooting</button><button class="btn secondary" id="reset">Reset Demo</button></div>
+<div style="margin-top:20px"><h2 style="font-size:16px">Diagnostic Checklist</h2><p class="sub">The app checks each layer in a structured order.</p><div class="checklist" id="checks">
+<div class="check"><span class="dot"></span><div><strong>Interface status</strong>Waiting for diagnostic…</div></div>
+<div class="check"><span class="dot"></span><div><strong>Addressing</strong>Waiting for diagnostic…</div></div>
+<div class="check"><span class="dot"></span><div><strong>Switching / VLAN</strong>Waiting for diagnostic…</div></div>
+<div class="check"><span class="dot"></span><div><strong>Routing / OSPF</strong>Waiting for diagnostic…</div></div>
+<div class="check"><span class="dot"></span><div><strong>Firewall filter</strong>Waiting for diagnostic…</div></div>
+</div></div>
+</section>
+</div>
+<section class="panel full"><h2>3. Simulated Device Log</h2><p class="sub">Sample diagnostic messages generated by the selected scenario (not output from a real Juniper device).</p><div class="log" id="log">[SYSTEM] Simulator initialized.\n[INFO] Select a scenario to begin the diagnostic workflow.</div></section>
+<section class="panel full"><h2>4. Internship Concepts Demonstrated</h2><div class="grid" style="grid-template-columns:repeat(3,1fr)">
+<div><strong>Junos OS & interfaces</strong><p class="sub">Operational state, interface checks, and IP addressing.</p></div>
+<div><strong>Switching & VLANs</strong><p class="sub">Logical segmentation, MAC learning, access and trunk concepts.</p></div>
+<div><strong>Routing & OSPF</strong><p class="sub">Route availability, route selection, and dynamic routing.</p></div>
+<div><strong>Firewall filters</strong><p class="sub">Traffic matching and accept/discard policy decisions.</p></div>
+<div><strong>Monitoring & logs</strong><p class="sub">Using diagnostic evidence to narrow down a likely fault.</p></div>
+<div><strong>Methodical troubleshooting</strong><p class="sub">Checking network layers in order instead of guessing.</p></div>
+</div></section>
+</main>
+<footer>Networking Cloud Virtual Internship · Katta Dindi Mokshith · 23102A040130</footer>
+<script>
+const scenarios={
+ healthy:{title:"Network is reachable",bad:null,checks:[["Interface status","Interface link is up and operational.",1],["Addressing","IP address and subnet appear consistent.",1],["Switching / VLAN","VLAN membership and switching path look correct.",1],["Routing / OSPF","Destination route is available in the routing table.",1],["Firewall filter","Policy permits the simulated traffic.",1]],logs:["[CHECK] Interface state: UP","[CHECK] Addressing: VALID","[CHECK] VLAN and MAC learning: OK","[CHECK] Route lookup: DESTINATION FOUND","[CHECK] Firewall filter: PERMIT","[RESULT] Simulated packet forwarded to destination."]},
+ interface:{title:"Likely cause: interface down",bad:"n-client",checks:[["Interface status","Interface is down; verify link, cable/virtual link, and administrative state.",0],["Addressing","Addressing cannot be fully validated until the interface is operational.",1],["Switching / VLAN","Switching path may be unavailable because the link is down.",1],["Routing / OSPF","Route checks may be inconclusive until interface connectivity is restored.",1],["Firewall filter","No evidence yet that a filter caused this issue.",1]],logs:["[CHECK] Interface state: DOWN","[WARN] Link is not operational.","[NEXT] Inspect interface status and physical/virtual connectivity.","[RESULT] Traffic cannot proceed from the affected interface."]},
+ address:{title:"Likely cause: IP addressing mismatch",bad:"n-client",checks:[["Interface status","Interface link is up.",1],["Addressing","Address/subnet mismatch detected in the simulated scenario.",0],["Switching / VLAN","VLAN path appears available.",1],["Routing / OSPF","Route lookup may fail if the source/destination subnet is incorrect.",1],["Firewall filter","No evidence yet that a filter caused this issue.",1]],logs:["[CHECK] Interface state: UP","[WARN] Addressing/subnet validation failed.","[NEXT] Verify interface address, prefix length, and destination subnet.","[RESULT] Correct addressing before continuing route diagnosis."]},
+ vlan:{title:"Likely cause: VLAN mismatch",bad:"n-switch",checks:[["Interface status","Interface link is up.",1],["Addressing","IP settings appear consistent with the intended design.",1],["Switching / VLAN","VLAN assignment or trunk carriage is incorrect in this scenario.",0],["Routing / OSPF","Inter-VLAN or upstream routing may not receive the expected traffic.",1],["Firewall filter","No evidence yet that a filter caused this issue.",1]],logs:["[CHECK] Interface state: UP","[CHECK] Addressing: VALID","[WARN] VLAN membership / trunk configuration mismatch.","[NEXT] Verify access VLAN, trunk allowed VLANs, and MAC table learning.","[RESULT] Frames may not reach the expected network segment."]},
+ route:{title:"Likely cause: missing route",bad:"n-router",checks:[["Interface status","Relevant interfaces are up.",1],["Addressing","Addressing appears consistent.",1],["Switching / VLAN","Local switching path appears available.",1],["Routing / OSPF","No usable route to the destination was found in this simulated routing table.",0],["Firewall filter","No evidence yet that a filter caused this issue.",1]],logs:["[CHECK] Interfaces: UP","[CHECK] VLAN path: OK","[WARN] Route lookup: NO MATCHING DESTINATION ROUTE","[NEXT] Review route table, static route configuration, and route preference.","[RESULT] Packet has no known path to the destination."]},
+ ospf:{title:"Likely cause: OSPF route not learned",bad:"n-router",checks:[["Interface status","OSPF-facing interface is up in this scenario.",1],["Addressing","IP addressing appears consistent.",1],["Switching / VLAN","Layer 2 path appears available.",1],["Routing / OSPF","Expected OSPF neighbor/route is unavailable in this scenario.",0],["Firewall filter","No evidence yet that a filter caused this issue.",1]],logs:["[CHECK] Interface state: UP","[CHECK] Addressing: VALID","[WARN] OSPF neighbor or expected learned route is missing.","[NEXT] Review neighbor state, area/interface settings, and learned routes.","[RESULT] Dynamic route is not available for forwarding."]},
+ firewall:{title:"Likely cause: firewall filter denies traffic",bad:"n-filter",checks:[["Interface status","Interfaces are up.",1],["Addressing","Addressing appears consistent.",1],["Switching / VLAN","Switching path appears available.",1],["Routing / OSPF","Route to destination is available.",1],["Firewall filter","Traffic matches a discard action in the simulated filter policy.",0]],logs:["[CHECK] Interface state: UP","[CHECK] Addressing and VLAN: OK","[CHECK] Route lookup: DESTINATION FOUND","[WARN] Firewall filter action: DISCARD","[NEXT] Verify filter attachment, match conditions, and intended policy.","[RESULT] Traffic is blocked by policy."]}
+};
+function reset(){document.querySelectorAll(".node").forEach(n=>n.classList.remove("active","problem","good"));document.getElementById("result").className="status neutral";document.getElementById("result").innerHTML='Ready. Choose a scenario and click <b>Run Troubleshooting</b>.';document.getElementById("k-status").textContent="Ready";document.getElementById("k-passed").textContent="—";document.getElementById("k-traffic").textContent="Not tested";document.getElementById("checks").innerHTML=[["Interface status","Waiting for diagnostic…"],["Addressing","Waiting for diagnostic…"],["Switching / VLAN","Waiting for diagnostic…"],["Routing / OSPF","Waiting for diagnostic…"],["Firewall filter","Waiting for diagnostic…"]].map(x=>`<div class="check"><span class="dot"></span><div><strong>${x[0]}</strong>${x[1]}</div></div>`).join("");document.getElementById("log").textContent="[SYSTEM] Simulator reset.\n[INFO] Select a scenario to begin the diagnostic workflow."}
+function run(){const s=scenarios[document.getElementById("scenario").value];document.querySelectorAll(".node").forEach(n=>n.classList.remove("active","problem","good"));["n-client","n-switch","n-router","n-source","n-filter","n-dest"].forEach(id=>document.getElementById(id).classList.add("good"));if(s.bad){document.getElementById(s.bad).classList.remove("good");document.getElementById(s.bad).classList.add("problem")}else{document.querySelectorAll(".node").forEach(n=>n.classList.add("good"))}
+document.getElementById("checks").innerHTML=s.checks.map(c=>`<div class="check ${c[2]?"pass":"fail"}"><span class="dot"></span><div><strong>${c[0]} · ${c[2]?"PASS":"ISSUE"}</strong>${c[1]}</div></div>`).join("");
+const passed=s.checks.filter(c=>c[2]).length;document.getElementById("k-status").textContent=s.bad?"Issue found":"Healthy";document.getElementById("k-passed").textContent=passed+"/5";document.getElementById("k-traffic").textContent=s.bad?"Blocked / at risk":"Forwarded";document.getElementById("result").className="status "+(s.bad?"bad":"ok");document.getElementById("result").innerHTML="<strong>"+s.title+"</strong><br>"+(s.bad?"Follow the suggested checks in the diagnostic list and verify the correction.":"All simulated checks passed; the packet can be forwarded in this scenario.");document.getElementById("log").innerHTML=s.logs.map(line=>line.includes("[WARN]")||line.includes("[NEXT]")?`<span class="warntxt">${line}</span>`:line.includes("[RESULT]")?`<span class="${s.bad?"warntxt":"oktxt"}">${line}</span>`:`<span class="oktxt">${line}</span>`).join("\n")}
+document.getElementById("run").addEventListener("click",run);document.getElementById("reset").addEventListener("click",reset);document.getElementById("scenario").addEventListener("change",reset);
+</script>
+</body></html>
